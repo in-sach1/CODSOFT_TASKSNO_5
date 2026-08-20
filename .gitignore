@@ -1,0 +1,39 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+.env.local
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Encryption keys
+secret.key
+*.key
+
+# Uploaded encrypted files
+uploads/*
+!uploads/.gitkeep
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Logs
+*.log

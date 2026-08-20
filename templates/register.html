@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div
+    class="card"
+    style="max-width: 500px; margin: auto;"
+>
+
+    <h1>
+        Create Account
+    </h1>
+
+    <p>
+        Register to securely upload and manage files.
+    </p>
+
+    <form method="POST">
+
+        <label>
+            Username
+        </label>
+
+        <input
+            type="text"
+            name="username"
+            minlength="3"
+            required
+        >
+
+        <label>
+            Password
+        </label>
+
+        <input
+            type="password"
+            name="password"
+            minlength="8"
+            required
+        >
+
+        <button type="submit">
+            Register
+        </button>
+
+    </form>
+
+    <p>
+
+        Already registered?
+
+        <a
+            href="{{ url_for('login') }}"
+        >
+            Login
+        </a>
+
+    </p>
+
+</div>
+
+{% endblock %}
