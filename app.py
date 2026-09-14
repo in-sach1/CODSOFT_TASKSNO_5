@@ -1,3 +1,4 @@
+import base64
 import os
 import sqlite3
 import uuid
@@ -79,18 +80,35 @@ app.config["MAX_CONTENT_LENGTH"] = MAX_FILE_SIZE
 # Secret key for Flask sessions
 # ------------------------------------------------------------
 
-FLASK_SECRET_KEY = os.environ.get(
-    "FLASK_SECRET_KEY"
-)
 
-if not FLASK_SECRET_KEY:
-    # Development fallback.
-    # For production, use an environment variable.
-    FLASK_SECRET_KEY = (
-        "change-this-development-secret-key"
-    )
+def load_secret_key():
+    """Load the application secret from env or a local file."""
+    secret_key = os.environ.get("FLASK_SECRET_KEY")
+    if secret_key:
+        return secret_key
+
+    if os.path.exists(KEY_FILE):
+        with open(KEY_FILE, "rb") as key_file:
+            return key_file.read().decode("utf-8")
+
+    secret_key = base64.urlsafe_b64encode(os.urandom(32)).decode("ascii")
+
+    with open(KEY_FILE, "wb") as key_file:
+        key_file.write(secret_key.encode("utf-8"))
+
+    os.chmod(KEY_FILE, 0o600)
+    return secret_key
+
+
+FLASK_SECRET_KEY = load_secret_key()
 
 app.secret_key = FLASK_SECRET_KEY
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = (
+    os.environ.get("FLASK_ENV") == "production"
+    or os.environ.get("APP_ENV") == "production"
+)
 
 
 # Serializer used for temporary download links
@@ -121,6 +139,7 @@ def load_encryption_key():
 
             key_file.write(key)
 
+        os.chmod(KEY_FILE, 0o600)
         return key
 
     with open(
